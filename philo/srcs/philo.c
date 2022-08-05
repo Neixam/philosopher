@@ -1,16 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ambouren <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/08/05 14:41:13 by ambouren          #+#    #+#             */
-/*   Updated: 2022/08/05 15:22:26 by ambouren         ###   ########.fr       */
+/*   Created: 2022/08/05 15:00:43 by ambouren          #+#    #+#             */
+/*   Updated: 2022/08/05 15:15:50 by ambouren         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-int	main(int ac, char **av)
+#include "philo.h"
+
+t_philo	init_philo(void)
 {
-	return (0);
+	t_philo	ret;
+
+	ret.nb_ph = 0;
+	ret.tm_to_die = 0;
+	ret.tm_to_eat = 0;
+	ret.tm_to_slp = 0;
+	ret.nb_eat = -1;
 }
