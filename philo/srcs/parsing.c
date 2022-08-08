@@ -6,27 +6,33 @@
 /*   By: ambouren <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/05 15:00:47 by ambouren          #+#    #+#             */
-/*   Updated: 2022/08/06 12:06:41 by ambouren         ###   ########.fr       */
+/*   Updated: 2022/08/08 14:04:03 by ambouren         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parsing.h"
 #include <stdio.h>
+#include <limits.h>
 
 int	ft_atoi(char *s, int *ret)
 {
-	int	sign;
-	int	i;
+	long long	value;
+	int			sign;
+	int			i;
 
 	i = 0;
 	sign = 1;
 	if (s[i] == '-' || s[i] == '+')
-		if (s[i] == '-')
+		if (s[i++] == '-')
 			sign = -1;
-	*ret = 0;
+	value = 0;
 	while (s[i] <= '9' && s[i] >= '0')
-		*ret = *ret * 10 + (s[i++] - '0');
-	*ret *= sign;
+	{
+		value = value * 10 + (s[i++] - '0');
+		if (value * sign < INT_MIN || value * sign > INT_MAX)
+			return (1);
+	}
+	*ret = value * sign;
 	if (s[i])
 		return (1);
 	return (0);

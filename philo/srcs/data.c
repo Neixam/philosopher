@@ -6,7 +6,7 @@
 /*   By: ambouren <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/06 09:04:52 by ambouren          #+#    #+#             */
-/*   Updated: 2022/08/08 13:36:29 by ambouren         ###   ########.fr       */
+/*   Updated: 2022/08/08 13:44:04 by ambouren         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,11 @@ int	check_die(t_data *data)
 	{
 		pthread_mutex_lock(&data->eating);
 		if (data->nb_eat != -1 && data->philos[i].nb_eat == 0)
+		{
+			pthread_mutex_unlock(&data->eating);
 			count_eat++;
+			continue ;
+		}
 		if (do_thing(data, data->philos + i))
 			return (1);
 		waiting(data->philos + i, 60);
