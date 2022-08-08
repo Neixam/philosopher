@@ -6,7 +6,7 @@
 /*   By: ambouren <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/06 09:04:52 by ambouren          #+#    #+#             */
-/*   Updated: 2022/08/06 15:29:40 by ambouren         ###   ########.fr       */
+/*   Updated: 2022/08/08 13:36:29 by ambouren         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,10 +35,10 @@ int	init_philos(t_data *data)
 	data->philos = (t_philo *)malloc(sizeof(t_philo) * data->nb_ph);
 	if (!data->philos)
 		return (1);
-	pthread_mutex_init(&data->mic, NULL);
 	pthread_mutex_init(&data->eating, NULL);
-	i = -1;
-	while (++i < data->nb_ph)
+	pthread_mutex_init(&data->mic, NULL);
+	i = data->nb_ph;
+	while (--i >= 0)
 	{
 		data->philos[i].my_id = i + 1;
 		data->philos[i].start_time = &data->start_time;
@@ -57,32 +57,25 @@ int	init_philos(t_data *data)
 	return (0);
 }
 
-void	check_die(t_data *data)
+int	check_die(t_data *data)
 {
-	int				i;
+	int	i;
+	int	count_eat;
 
-	while (1)
+	i = -1;
+	count_eat = 0;
+	while (++i < data->nb_ph)
 	{
-		i = -1;
-		while (++i < data->nb_ph)
-		{
-			pthread_mutex_lock(&data->eating);
-			if (gettime() - data->philos[i].last_eat > (unsigned long)data->tm_to_die)
-			{
-				dying(&data->philos[i]);
-				data->dead = 1;
-				pthread_mutex_unlock(&data->eating);
-				return ;
-			}
-			pthread_mutex_unlock(&data->eating);
-			waiting(100);
-		}
-		i = 0;
-		while (data->nb_eat != -1 && i < data->nb_ph && data->philos[i].nb_eat == 0)
-			i++;
-		if (i == data->nb_ph)
-			return ;
+		pthread_mutex_lock(&data->eating);
+		if (data->nb_eat != -1 && data->philos[i].nb_eat == 0)
+			count_eat++;
+		if (do_thing(data, data->philos + i))
+			return (1);
+		waiting(data->philos + i, 60);
 	}
+	if (count_eat == data->nb_ph)
+		return (1);
+	return (0);
 }
 
 void	destroy_data(t_data *data)
@@ -105,10 +98,11 @@ int	launch_philos(t_data *data)
 	data->start_time = gettime();
 	while (++i < data->nb_ph)
 	{
-		pthread_create(&data->philos[i].id, NULL, philo, data->philos + i);
 		data->philos[i].last_eat = gettime();
+		pthread_create(&data->philos[i].id, NULL, philo, data->philos + i);
 	}
-	check_die(data);
+	while (!check_die(data))
+		;
 	i = -1;
 	while (++i < data->nb_ph)
 		pthread_join(data->philos[i].id, NULL);

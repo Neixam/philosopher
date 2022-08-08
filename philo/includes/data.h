@@ -6,7 +6,7 @@
 /*   By: ambouren <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/06 09:08:09 by ambouren          #+#    #+#             */
-/*   Updated: 2022/08/06 15:30:18 by ambouren         ###   ########.fr       */
+/*   Updated: 2022/08/08 13:10:43 by ambouren         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,10 @@ typedef struct s_data
 	int				tm_to_slp;
 	int				nb_eat;
 	int				dead;
+	int				stop;
 	unsigned long	start_time;
-	pthread_mutex_t	mic;
 	pthread_mutex_t	eating;
+	pthread_mutex_t	mic;
 	t_philo			*philos;
 }	t_data;
 

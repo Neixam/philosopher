@@ -6,7 +6,7 @@
 /*   By: ambouren <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/05 15:00:43 by ambouren          #+#    #+#             */
-/*   Updated: 2022/08/06 15:56:13 by ambouren         ###   ########.fr       */
+/*   Updated: 2022/08/08 12:10:36 by ambouren         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,20 @@
 #include "waiting.h"
 #include <stdio.h>
 
-void	say(t_philo *philo, char *s)
+void	say(t_philo *philo, char *s, int tie)
 {
+	if (tie)
+		pthread_mutex_lock(philo->eating);
 	pthread_mutex_lock(philo->mic);
 	if (*philo->dead)
 	{
+		if (tie)
+			pthread_mutex_unlock(philo->eating);
 		pthread_mutex_unlock(philo->mic);
 		return ;
 	}
+	if (tie)
+		pthread_mutex_unlock(philo->eating);
 	printf("%lu %d %s\n", gettime() - *philo->start_time,
 		philo->my_id, s);
 	pthread_mutex_unlock(philo->mic);
@@ -29,25 +35,27 @@ void	say(t_philo *philo, char *s)
 
 void	sleeping(t_philo *philo)
 {
-	say(philo, "is sleeping");
-	waiting(philo->tm_to_slp);
+	pthread_mutex_unlock(philo->r_fork);
+	pthread_mutex_unlock(&philo->my_fork);
+	say(philo, "is sleeping", 1);
+	waiting(philo, philo->tm_to_slp);
+	say(philo, "is thinking", 1);
 }
 
 void	eating(t_philo *philo)
 {
-
-	say(philo, "is eating");
+	say(philo, "is eating", 1);
 	pthread_mutex_lock(philo->eating);
 	philo->last_eat = gettime();
-	pthread_mutex_unlock(philo->eating);
 	if (philo->nb_eat != -1)
 		philo->nb_eat--;
-	waiting(philo->tm_to_eat);
+	pthread_mutex_unlock(philo->eating);
+	waiting(philo, philo->tm_to_eat);
 }
 
 void	dying(t_philo *philo)
 {
-	say(philo, "died");
+	say(philo, "died", 0);
 }
 
 void	*philo(void *arg)
@@ -55,19 +63,17 @@ void	*philo(void *arg)
 	t_philo	*philo;
 
 	philo = (t_philo *)arg;
-	if (philo->my_id % 2)
-		waiting(philo->tm_to_eat / 10);
-	while (!*philo->dead && (philo->nb_eat == -1 || philo->nb_eat > 0))
+	while (1)
 	{
-		pthread_mutex_lock(&philo->my_fork);
-		say(philo, "has taken a fork");
-		pthread_mutex_lock(philo->r_fork);
-		say(philo, "has taken a fork");
+		pthread_mutex_lock(philo->eating);
+		if (*philo->dead || (philo->nb_eat != -1 && philo->nb_eat <= 0))
+		{
+			pthread_mutex_unlock(philo->eating);
+			return (NULL);
+		}
+		pthread_mutex_unlock(philo->eating);
+		taking_fork(philo);
 		eating(philo);
-		pthread_mutex_unlock(philo->r_fork);
-		pthread_mutex_unlock(&philo->my_fork);
 		sleeping(philo);
-		say(philo, "is thinking");
 	}
-	return (NULL);
 }

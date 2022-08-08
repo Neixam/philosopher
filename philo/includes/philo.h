@@ -6,7 +6,7 @@
 /*   By: ambouren <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/05 15:08:53 by ambouren          #+#    #+#             */
-/*   Updated: 2022/08/06 14:12:59 by ambouren         ###   ########.fr       */
+/*   Updated: 2022/08/08 12:11:16 by ambouren         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,8 @@ typedef struct s_philo
 
 void	*philo(void *arg);
 
-void	dying(t_philo *philo);
+void	say(t_philo *philo, char *s, int tie);
 
-void	say(t_philo *philo, char *s);
+void	dying(t_philo *philo);
 
 #endif
