@@ -1,29 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   waiting.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ambouren <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/08/05 14:41:13 by ambouren          #+#    #+#             */
-/*   Updated: 2022/08/06 15:23:54 by ambouren         ###   ########.fr       */
+/*   Created: 2022/08/06 10:27:07 by ambouren          #+#    #+#             */
+/*   Updated: 2022/08/06 13:15:04 by ambouren         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parsing.h"
-#include "data.h"
+#ifndef WAITING_H
+# define WAITING_H
 
-int	main(int ac, char **av)
-{
-	t_data	data;
+void			waiting(unsigned long waiting_time);
 
-	data = init_data();
-	if (parsing(ac, av, &data))
-		return (1);
-	if (init_philos(&data))
-		return (1);
-	if (launch_philos(&data))
-		return (1);
-	destroy_data(&data);
-	return (0);
-}
+unsigned long	gettime(void);
+
+#endif

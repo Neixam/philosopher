@@ -1,41 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo.h                                            :+:      :+:    :+:   */
+/*   data.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ambouren <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/08/05 15:08:53 by ambouren          #+#    #+#             */
-/*   Updated: 2022/08/06 14:12:59 by ambouren         ###   ########.fr       */
+/*   Created: 2022/08/06 09:08:09 by ambouren          #+#    #+#             */
+/*   Updated: 2022/08/06 15:30:18 by ambouren         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PHILO_H
-# define PHILO_H
-# include <pthread.h>
-# include <sys/time.h>
+#ifndef DATA_H
+# define DATA_H
+# include "philo.h"
 
-typedef struct s_philo
+typedef struct s_data
 {
-	int				my_id;
-	pthread_t		id;
-	unsigned long	*start_time;
-	unsigned long	last_eat;
-	pthread_mutex_t	*mic;
-	pthread_mutex_t	my_fork;
-	pthread_mutex_t	*eating;
-	pthread_mutex_t	*r_fork;
+	int				nb_ph;
 	int				tm_to_die;
 	int				tm_to_eat;
 	int				tm_to_slp;
 	int				nb_eat;
-	int				*dead;
-}	t_philo;
+	int				dead;
+	unsigned long	start_time;
+	pthread_mutex_t	mic;
+	pthread_mutex_t	eating;
+	t_philo			*philos;
+}	t_data;
 
-void	*philo(void *arg);
+t_data	init_data(void);
 
-void	dying(t_philo *philo);
+int		launch_philos(t_data *data);
 
-void	say(t_philo *philo, char *s);
+int		init_philos(t_data *data);
+
+void	destroy_data(t_data *data);
 
 #endif

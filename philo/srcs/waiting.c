@@ -1,29 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   waiting.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ambouren <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/08/05 14:41:13 by ambouren          #+#    #+#             */
-/*   Updated: 2022/08/06 15:23:54 by ambouren         ###   ########.fr       */
+/*   Created: 2022/08/06 10:25:46 by ambouren          #+#    #+#             */
+/*   Updated: 2022/08/06 15:14:12 by ambouren         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parsing.h"
-#include "data.h"
+#include "waiting.h"
+#include <sys/time.h>
+#include <unistd.h>
 
-int	main(int ac, char **av)
+unsigned long	gettime(void)
 {
-	t_data	data;
+	struct timeval	actual;
 
-	data = init_data();
-	if (parsing(ac, av, &data))
-		return (1);
-	if (init_philos(&data))
-		return (1);
-	if (launch_philos(&data))
-		return (1);
-	destroy_data(&data);
-	return (0);
+	gettimeofday(&actual, 0);
+	return ((actual.tv_sec * 1000) + (actual.tv_usec / 1000));
+}
+
+void	waiting(unsigned long waiting_time)
+{
+	usleep(waiting_time * 1000);
 }
